@@ -249,11 +249,14 @@ internal class EmbedBuilder
     /// <returns>The current EmbedBuilder instance for method chaining</returns>
     public EmbedBuilder SetThumbnail(string? url)
     {
+        // Only set thumbnail if it's enabled and we have a valid URL
         if (_config.EmbedThumbnailEnabled && !string.IsNullOrEmpty(url))
         {
+            // At this point, we've verified url is not null or empty
+            // But we use null-coalescing to satisfy the compiler
             _embed.thumbnail = new DiscordEmbedThumbnail
             {
-                url = url
+                url = url! // Using null-forgiving operator as we've already checked it's not null
             };
         }
         return this;
@@ -266,11 +269,14 @@ internal class EmbedBuilder
     /// <returns>The current EmbedBuilder instance for method chaining</returns>
     public EmbedBuilder SetImage(string? url)
     {
+        // Only set image if we have a valid URL
         if (!string.IsNullOrEmpty(url))
         {
+            // At this point, we've verified url is not null or empty
+            // But we use null-forgiving to satisfy the compiler
             _embed.image = new DiscordEmbedImage
             {
-                url = url
+                url = url! // Using null-forgiving operator as we've already checked it's not null
             };
         }
         return this;
