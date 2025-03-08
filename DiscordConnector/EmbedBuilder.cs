@@ -346,8 +346,8 @@ internal class EmbedBuilder
     /// <returns>The current EmbedBuilder instance for method chaining</returns>
     public EmbedBuilder AddField(string? name, string? value, bool inline = false)
     {
-        // Skip field if fields are disabled in config or if either name or value is null or empty
-        if (!_config.EmbedFieldsEnabled || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
+        // Skip field if either name or value is null or empty
+        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
         {
             return this;
         }
