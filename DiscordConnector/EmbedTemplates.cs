@@ -404,6 +404,43 @@ internal static class EmbedTemplates
     }
     
     /// <summary>
+    ///     Creates an active players announcement embed.
+    /// </summary>
+    /// <param name="message">The formatted message content with player counts</param>
+    /// <param name="worldName">The name of the server world</param>
+    /// <returns>A configured EmbedBuilder instance</returns>
+    public static EmbedBuilder ActivePlayersAnnouncement(string message, string worldName = "")
+    {
+        var variables = new Dictionary<string, string>
+        {
+            {"worldName", worldName},
+            {"timestamp", DateTime.UtcNow.ToString("s")}
+        };
+        
+        string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
+        var builder = new EmbedBuilder()
+            .SetColor("#4B84FF") // Use a vibrant blue color for active player announcements
+            .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Always use server name as author
+            .SetTitle("👥 Active Players") // Use a people emoji for active players
+            .SetDescription(message)
+            .SetTimestamp();
+            
+        // Add thumbnail if enabled
+        if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
+        {
+            builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
+        }
+            
+        // Set footer with world info
+        builder.SetFooterFromTemplate(variables);
+        
+        // Set URL if configured
+        builder.SetUrlFromTemplate(variables);
+        
+        return builder;
+    }
+    
+    /// <summary>
     ///     Gets the status text for a server event.
     /// </summary>
     /// <param name="eventType">The server event type</param>
