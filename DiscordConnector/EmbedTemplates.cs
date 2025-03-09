@@ -197,6 +197,8 @@ internal static class EmbedTemplates
         if (Webhook.Event.EventStart == eventType)
         {
             builder.SetTitle($"🌩️ Event Started: {eventName}");
+            // Explicitly set color from config for world events to ensure it's applied
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
             if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
             {
                 builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
@@ -205,6 +207,8 @@ internal static class EmbedTemplates
         else if (Webhook.Event.EventStop == eventType)
         {
             builder.SetTitle($"☀️ Event Ended: {eventName}");
+            // Explicitly set color from config for world events to ensure it's applied
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
             if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
             {
                 builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
@@ -213,8 +217,8 @@ internal static class EmbedTemplates
         else if (Webhook.Event.NewDayNumber == eventType)
         {
             builder.SetTitle($"🌅 New Day: {eventName}");
-            // Use a bright, vibrant color for day number display
-            builder.SetColor("#FFD700"); // Gold color for better visibility
+            // Use the configured color for new day events
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedNewDayColor);
             // Add thumbnail for day number events
             if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
             {
@@ -224,8 +228,8 @@ internal static class EmbedTemplates
         else if (Webhook.Event.ServerSave == eventType)
         {
             builder.SetTitle($"💾 World Saved");
-            // Use a vibrant blue for world save events
-            builder.SetColor("#1D8BF1");
+            // Use the configured color for server save events
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedServerSaveColor);
         }
         
         // Add the message as description
@@ -344,7 +348,7 @@ internal static class EmbedTemplates
         }
         
         var builder = new EmbedBuilder()
-            .SetColor("#3498DB") // Use a bright blue color for position messages
+            .SetColor(DiscordConnectorPlugin.StaticConfig.EmbedPositionMessageColor) // Use the configured color for position messages
             .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Always use server name (Valheim) as author
             .SetTitle(title) // Use a cleaner title format without duplication
             .SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled ? 
@@ -383,7 +387,7 @@ internal static class EmbedTemplates
         };
         
         var builder = new EmbedBuilder()
-            .SetColor("#9B59B6") // Use a vibrant purple color for leaderboards
+            .SetColor(DiscordConnectorPlugin.StaticConfig.EmbedLeaderboardColor) // Use the configured color for leaderboards
             .SetAuthor("Leaderboard", null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Trophy icon
             .SetTitle(title)
             .SetDescription(description)
@@ -419,7 +423,7 @@ internal static class EmbedTemplates
         
         string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
         var builder = new EmbedBuilder()
-            .SetColor("#4B84FF") // Use a vibrant blue color for active player announcements
+            .SetColor(DiscordConnectorPlugin.StaticConfig.EmbedActivePlayersColor) // Use the configured color for active player announcements
             .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Always use server name as author
             .SetTitle("👥 Active Players") // Use a people emoji for active players
             .SetDescription(message)
@@ -492,7 +496,7 @@ internal static class EmbedTemplates
 
         string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
         var builder = new EmbedBuilder()
-            .SetColor("#FFAA00") // Gold/yellow color for leaderboards
+            .SetColor(DiscordConnectorPlugin.StaticConfig.EmbedLeaderboardEmbedColor) // Use the configured color for leaderboard embeds
             .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl)
             .SetTitle($"🏆 {title}")
             .SetTimestamp();

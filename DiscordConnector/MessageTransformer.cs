@@ -601,14 +601,17 @@ internal static class MessageTransformer
         if (eventType == Webhook.Event.EventStart)
         {
             eventName = eventStartMsg;
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Creating EventStart embed with name: {eventName}");
         }
         else if (eventType == Webhook.Event.EventStop)
         {
             eventName = eventEndMsg;
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Creating EventStop embed with name: {eventName}");
         }
         else
         {
             eventName = "Game Event";
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Creating other game event embed with name: {eventName} - Event type: {eventType}");
         }
         
         return EmbedTemplates.WorldEvent(eventType, formattedMessage, eventName, worldName);
@@ -634,14 +637,17 @@ internal static class MessageTransformer
         if (eventType == Webhook.Event.EventStart)
         {
             eventName = eventStartMsg;
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Creating EventStart embed with name: {eventName}");
         }
         else if (eventType == Webhook.Event.EventStop)
         {
             eventName = eventEndMsg;
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Creating EventStop embed with name: {eventName}");
         }
         else
         {
             eventName = "Game Event";
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Creating other game event embed with name: {eventName} - Event type: {eventType}");
         }
         
         var embed = EmbedTemplates.WorldEvent(eventType, formattedMessage, eventName, worldName);
