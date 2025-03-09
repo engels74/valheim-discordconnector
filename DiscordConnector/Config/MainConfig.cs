@@ -542,10 +542,6 @@ internal class MainConfig
             Webhook.Event.NewDayNumber => EmbedNewDayColor,
             Webhook.Event.ServerSave => EmbedServerSaveColor,
             Webhook.Event.EventStart or Webhook.Event.EventStop => EmbedWorldEventColor,
-            Webhook.Event.PositionAnnouncement => EmbedPositionMessageColor,
-            Webhook.Event.LeaderboardAnnouncement => EmbedLeaderboardColor,
-            Webhook.Event.ActivePlayersAnnouncement => EmbedActivePlayersColor,
-            Webhook.Event.LeaderboardEmbed => EmbedLeaderboardEmbedColor,
             _ => EmbedOtherEventColor
         };
     }

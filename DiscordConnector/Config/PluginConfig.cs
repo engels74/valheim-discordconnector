@@ -137,6 +137,12 @@ internal class PluginConfig
     public string EmbedShoutMessageColor => mainConfig.EmbedShoutMessageColor;
     public string EmbedOtherEventColor => mainConfig.EmbedOtherEventColor;
     public string EmbedWorldEventColor => mainConfig.EmbedWorldEventColor;
+    public string EmbedNewDayColor => mainConfig.EmbedNewDayColor;
+    public string EmbedServerSaveColor => mainConfig.EmbedServerSaveColor;
+    public string EmbedPositionMessageColor => mainConfig.EmbedPositionMessageColor;
+    public string EmbedLeaderboardColor => mainConfig.EmbedLeaderboardColor;
+    public string EmbedActivePlayersColor => mainConfig.EmbedActivePlayersColor;
+    public string EmbedLeaderboardEmbedColor => mainConfig.EmbedLeaderboardEmbedColor;
     
     // Other Embed Customization Properties
     public string EmbedFooterText => mainConfig.EmbedFooterText;
