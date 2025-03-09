@@ -706,35 +706,16 @@ internal static class MessageTransformer
     ///     Extracts player information for embed author usage.
     /// </summary>
     /// <param name="playerName">Name of the player</param>
-    /// <param name="eventType">Event type to determine appropriate icon</param>
-    /// <returns>Tuple with author name, url and icon url</returns>
+    /// <param name="eventType">Event type (not used for icon selection anymore)</param>
+    /// <returns>Tuple with author name, url and icon url (both null)</returns>
     public static Tuple<string, string?, string?> GetPlayerAuthorInfo(string playerName, Webhook.Event eventType)
     {
         string authorName = playerName;
         string? authorUrl = null;
         string? iconUrl = null;
         
-        // Determine appropriate icon based on event type
-        if (Webhook.PlayerJoinEvents.Contains(eventType))
-        {
-            iconUrl = "https://cdn.discordapp.com/emojis/885113363525304371.webp"; // Join icon
-        }
-        else if (Webhook.PlayerLeaveEvents.Contains(eventType))
-        {
-            iconUrl = "https://cdn.discordapp.com/emojis/885113362686824468.webp"; // Leave icon
-        }
-        else if (Webhook.PlayerDeathEvents.Contains(eventType))
-        {
-            iconUrl = "https://cdn.discordapp.com/emojis/885113362581348392.webp"; // Death icon
-        }
-        else if (Webhook.PlayerShoutEvents.Contains(eventType))
-        {
-            iconUrl = "https://cdn.discordapp.com/emojis/885113362656477194.webp"; // Chat icon
-        }
-        else
-        {
-            iconUrl = "https://cdn.discordapp.com/emojis/894525393744064.webp"; // Default player icon
-        }
+        // No longer using icons for player author information
+        // Just return the player name with null for URL and icon URL
         
         return new Tuple<string, string?, string?>(authorName, authorUrl, iconUrl);
     }
