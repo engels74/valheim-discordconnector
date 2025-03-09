@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using DiscordConnector.Config;
 using DiscordConnector.Records;
+// Required for embedding support
+using DiscordConnector;
 
 namespace DiscordConnector.Leaderboards;
 
@@ -103,7 +105,29 @@ internal class Composer : Base
             settings.DisplayedHeading, settings.NumberListings
         );
 
-        DiscordApi.SendMessageWithFields(ev, discordContent, leaderFields);
+        // Get the world name if available
+        string worldName = "";
+        if (ZNet.instance != null)
+        {
+            worldName = ZNet.instance.GetWorldName();
+        }
+        
+        // Check if embeds are enabled in the configuration
+        if (DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled)
+        {
+            // Create and send the embed using the new LeaderboardEmbed template
+            var embedBuilder = EmbedTemplates.LeaderboardEmbed(
+                settings.DisplayedHeading,
+                leaderFields,
+                worldName
+            );
+            DiscordApi.SendEmbed(ev, embedBuilder);
+        }
+        else
+        {
+            // Fallback to plain text version if embeds are not enabled
+            DiscordApi.SendMessageWithFields(ev, discordContent, leaderFields);
+        }
 
         // string json = JsonConvert.SerializeObject(rankings, Formatting.Indented);
         // DiscordApi.SendMessage($"```json\n{json}\n```");

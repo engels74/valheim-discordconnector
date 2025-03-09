@@ -474,4 +474,47 @@ internal static class EmbedTemplates
         
         return "Unknown";
     }
+    
+    /// <summary>
+    ///     Creates a leaderboard announcement embed.
+    /// </summary>
+    /// <param name="title">The leaderboard title</param>
+    /// <param name="fields">List of field name/value tuples</param>
+    /// <param name="worldName">The name of the server world</param>
+    /// <returns>A configured EmbedBuilder instance</returns>
+    public static EmbedBuilder LeaderboardEmbed(string title, List<Tuple<string, string>> fields, string worldName = "")
+    {
+        var variables = new Dictionary<string, string>
+        {
+            {"worldName", worldName},
+            {"timestamp", DateTime.UtcNow.ToString("s")}
+        };
+
+        string serverName = DiscordConnectorPlugin.StaticConfig.ServerName;
+        var builder = new EmbedBuilder()
+            .SetColor("#FFAA00") // Gold/yellow color for leaderboards
+            .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl)
+            .SetTitle($"🏆 {title}")
+            .SetTimestamp();
+
+        // Add thumbnail if enabled
+        if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
+        {
+            builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
+        }
+
+        // Add fields from the leaderboard entries
+        foreach (var field in fields)
+        {
+            builder.AddField(field.Item1, MessageTransformer.FormatFieldContent(field.Item2));
+        }
+
+        // Set footer with world info
+        builder.SetFooterFromTemplate(variables);
+
+        // Set URL if configured
+        builder.SetUrlFromTemplate(variables);
+
+        return builder;
+    }
 }
