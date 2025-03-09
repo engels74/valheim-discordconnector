@@ -133,6 +133,15 @@ internal static class EmbedTemplates
                 builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
             }
         }
+        else if (Webhook.PlayerPingEvents.Contains(eventType))
+        {
+            builder.SetTitle("📍 Player Pings");
+            // Use the thumbnail from config
+            if (DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled)
+            {
+                builder.SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl);
+            }
+        }
         
         // Add the message as description
         builder.SetDescription(message);
