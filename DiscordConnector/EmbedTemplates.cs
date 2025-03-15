@@ -335,11 +335,13 @@ internal static class EmbedTemplates
         string title;
         if (Webhook.Event.EventStop == eventType)
         {
-            title = "Event Stopped";
+            title = "☀️ Event Stopped";
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
         }
         else if (Webhook.Event.EventStart == eventType)
         {
-            title = "Event Started";
+            title = "🌩️ Event Started";
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
         }
         else
         {
@@ -348,8 +350,7 @@ internal static class EmbedTemplates
         }
         
         var builder = new EmbedBuilder()
-            .SetColor(DiscordConnectorPlugin.StaticConfig.EmbedPositionMessageColor) // Use the configured color for position messages
-            .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl) // Always use server name (Valheim) as author
+            .SetAuthor(serverName, null, DiscordConnectorPlugin.StaticConfig.EmbedAuthorIconUrl)
             .SetTitle(title) // Use a cleaner title format without duplication
             .SetThumbnail(DiscordConnectorPlugin.StaticConfig.EmbedThumbnailEnabled ? 
                         DiscordConnectorPlugin.StaticConfig.EmbedThumbnailUrl : null)
