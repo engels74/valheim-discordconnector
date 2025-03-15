@@ -18,6 +18,11 @@ internal class Composer : Base
 
     public override void SendLeaderBoard()
     {
+        if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Starting to build leaderboard {leaderBoardIdx}");
+        }
+
         if (leaderBoardIdx > DiscordConnectorPlugin.StaticConfig.LeaderBoards.Length || leaderBoardIdx < 0)
         {
             DiscordConnectorPlugin.StaticLogger.LogWarning(
@@ -28,13 +33,35 @@ internal class Composer : Base
         LeaderBoardConfigReference settings = DiscordConnectorPlugin.StaticConfig.LeaderBoards[leaderBoardIdx];
         Webhook.Event ev = DiscordConnectorPlugin.StaticConfig.LeaderBoards[leaderBoardIdx].WebhookEvent;
 
+        if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Leaderboard {leaderBoardIdx} settings: Enabled={settings.Enabled}, Webhook Event={ev}");
+        }
+
         if (!settings.Enabled)
         {
+            if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+            {
+                DiscordConnectorPlugin.StaticLogger.LogInfo($"Leaderboard {leaderBoardIdx} is disabled, exiting");
+            }
             return;
         }
 
         // Build standings
+        if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Building rankings for leaderboard {leaderBoardIdx}");
+        }
         Dictionary<Statistic, List<CountResult>> rankings = makeRankings(settings);
+
+        if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Rankings retrieved for leaderboard {leaderBoardIdx}: {string.Join(", ", rankings.Keys)}");
+            foreach (var key in rankings.Keys)
+            {
+                DiscordConnectorPlugin.StaticLogger.LogInfo($"  - {key}: {rankings[key]?.Count ?? 0} results");
+            }
+        }
 
         // Build leader board for discord
         List<Tuple<string, string>> leaderFields = new();
@@ -45,6 +72,10 @@ internal class Composer : Base
             List<CountResult> deathRankings;
             if (rankings.TryGetValue(Statistic.Death, out deathRankings))
             {
+                if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+                {
+                    DiscordConnectorPlugin.StaticLogger.LogInfo($"Found {deathRankings?.Count ?? 0} death rankings");
+                }
                 if (deathRankings.Count > 0)
                 {
                     leaderFields.Add(Tuple.Create("Deaths", LeaderbBoard.RankedCountResultToString(deathRankings)));
@@ -101,15 +132,40 @@ internal class Composer : Base
             }
         }
 
+        // Debug the leaderFields
+        if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Built {leaderFields.Count} leader fields for leaderboard {leaderBoardIdx}");
+            foreach (var field in leaderFields)
+            {
+                DiscordConnectorPlugin.StaticLogger.LogInfo($"  - Field: {field.Item1}, Content length: {field.Item2?.Length ?? 0}");
+            }
+        }
+
         string discordContent = MessageTransformer.FormatLeaderBoardHeader(
             settings.DisplayedHeading, settings.NumberListings
         );
 
         // Get the world name if available
-        string worldName = "";
+        string worldName = "unknown";
         if (ZNet.instance != null)
         {
             worldName = ZNet.instance.GetWorldName();
+        }
+        
+        if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"About to send leaderboard {leaderBoardIdx} to Discord. Embed enabled: {DiscordConnectorPlugin.StaticConfig.DiscordEmbedsEnabled}, World: {worldName}, Field count: {leaderFields.Count}");
+        }
+        
+        // Check if we have any fields to send
+        if (leaderFields.Count == 0)
+        {
+            if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+            {
+                DiscordConnectorPlugin.StaticLogger.LogWarning($"No leader fields to send for leaderboard {leaderBoardIdx} - skipping webhook message");
+            }
+            return; // No point in sending an empty leaderboard
         }
         
         // Check if embeds are enabled in the configuration
@@ -121,26 +177,63 @@ internal class Composer : Base
                 leaderFields,
                 worldName
             );
-            DiscordApi.SendEmbed(ev, embedBuilder);
+            
+            if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+            {
+                DiscordConnectorPlugin.StaticLogger.LogInfo($"Sending embed for leaderboard {leaderBoardIdx}");
+            }
+            
+            try {
+                DiscordApi.SendEmbed(ev, embedBuilder);
+                if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+                {
+                    DiscordConnectorPlugin.StaticLogger.LogInfo($"Successfully sent embed for leaderboard {leaderBoardIdx}");
+                }
+            } catch (Exception ex) {
+                DiscordConnectorPlugin.StaticLogger.LogError($"Error sending leaderboard {leaderBoardIdx} embed: {ex.Message}");
+            }
         }
         else
         {
             // Fallback to plain text version if embeds are not enabled
-            DiscordApi.SendMessageWithFields(ev, discordContent, leaderFields);
+            if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+            {
+                DiscordConnectorPlugin.StaticLogger.LogInfo($"Sending plain text message for leaderboard {leaderBoardIdx}");
+            }
+            
+            try {
+                DiscordApi.SendMessageWithFields(ev, discordContent, leaderFields);
+                if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+                {
+                    DiscordConnectorPlugin.StaticLogger.LogInfo($"Successfully sent plain text message for leaderboard {leaderBoardIdx}");
+                }
+            } catch (Exception ex) {
+                DiscordConnectorPlugin.StaticLogger.LogError($"Error sending leaderboard {leaderBoardIdx} plain text: {ex.Message}");
+            }
         }
-
-        // string json = JsonConvert.SerializeObject(rankings, Formatting.Indented);
-        // DiscordApi.SendMessage($"```json\n{json}\n```");
     }
 
     private Dictionary<Statistic, List<CountResult>> makeRankings(LeaderBoardConfigReference settings)
     {
+        if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Making rankings with time range: {settings.TimeRange}");
+        }
+        
         if (settings.TimeRange == TimeRange.AllTime)
         {
+            if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+            {
+                DiscordConnectorPlugin.StaticLogger.LogInfo("Using AllRankings method");
+            }
             return AllRankings(settings);
         }
 
         Tuple<DateTime, DateTime>? BeginEndDate = DateHelper.StartEndDatesForTimeRange(settings.TimeRange);
+        if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Using TimeBasedRankings with range: {BeginEndDate.Item1} to {BeginEndDate.Item2}");
+        }
         return TimeBasedRankings(settings, BeginEndDate.Item1, BeginEndDate.Item2);
     }
 

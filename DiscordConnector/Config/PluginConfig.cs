@@ -230,6 +230,7 @@ internal class PluginConfig
     public bool DebugEveryEventChange => togglesConfig.DebugEveryEventChange;
     public bool DebugHttpRequestResponse => togglesConfig.DebugHttpRequestResponse;
     public bool DebugDatabaseMethods => togglesConfig.DebugDatabaseMethods;
+    public bool DebugLeaderboardOperations => togglesConfig.DebugLeaderboardOperations;
 
     // Leader board Messages
     public string LeaderBoardTopPlayerHeading => messagesConfig.LeaderBoardTopPlayerHeading;
