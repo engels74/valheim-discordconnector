@@ -76,7 +76,7 @@ internal class Composer : Base
                 {
                     DiscordConnectorPlugin.StaticLogger.LogInfo($"Found {deathRankings?.Count ?? 0} death rankings");
                 }
-                if (deathRankings.Count > 0)
+                if (deathRankings?.Count > 0)
                 {
                     leaderFields.Add(Tuple.Create("Deaths", LeaderbBoard.RankedCountResultToString(deathRankings)));
                 }
@@ -88,7 +88,7 @@ internal class Composer : Base
             List<CountResult> sessionRankings;
             if (rankings.TryGetValue(Statistic.Session, out sessionRankings))
             {
-                if (sessionRankings.Count > 0)
+                if (sessionRankings?.Count > 0)
                 {
                     leaderFields.Add(Tuple.Create("Sessions", LeaderbBoard.RankedCountResultToString(sessionRankings)));
                 }
@@ -100,7 +100,7 @@ internal class Composer : Base
             List<CountResult> shoutRankings;
             if (rankings.TryGetValue(Statistic.Shout, out shoutRankings))
             {
-                if (shoutRankings.Count > 0)
+                if (shoutRankings?.Count > 0)
                 {
                     leaderFields.Add(Tuple.Create("Shouts", LeaderbBoard.RankedCountResultToString(shoutRankings)));
                 }
@@ -112,7 +112,7 @@ internal class Composer : Base
             List<CountResult> pingRankings;
             if (rankings.TryGetValue(Statistic.Ping, out pingRankings))
             {
-                if (pingRankings.Count > 0)
+                if (pingRankings?.Count > 0)
                 {
                     leaderFields.Add(Tuple.Create("Pings", LeaderbBoard.RankedCountResultToString(pingRankings)));
                 }
@@ -124,7 +124,7 @@ internal class Composer : Base
             List<CountResult> timeOnlineRankings;
             if (rankings.TryGetValue(Statistic.TimeOnline, out timeOnlineRankings))
             {
-                if (timeOnlineRankings.Count > 0)
+                if (timeOnlineRankings?.Count > 0)
                 {
                     leaderFields.Add(
                         Tuple.Create("Time Online", LeaderbBoard.RankedSecondsToString(timeOnlineRankings)));
