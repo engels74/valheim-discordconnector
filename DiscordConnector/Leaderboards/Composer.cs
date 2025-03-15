@@ -138,13 +138,18 @@ internal class Composer : Base
             DiscordConnectorPlugin.StaticLogger.LogInfo($"Built {leaderFields.Count} leader fields for leaderboard {leaderBoardIdx}");
             foreach (var field in leaderFields)
             {
-                DiscordConnectorPlugin.StaticLogger.LogInfo($"  - Field: {field.Item1}, Content length: {field.Item2?.Length ?? 0}");
+                DiscordConnectorPlugin.StaticLogger.LogInfo($"  - Field: {field.Item1}, Content: '{field.Item2}'");
             }
         }
 
         string discordContent = MessageTransformer.FormatLeaderBoardHeader(
             settings.DisplayedHeading, settings.NumberListings
         );
+        
+        if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogInfo($"Formatted header: '{discordContent}'");
+        }
 
         // Get the world name if available
         string worldName = "unknown";
@@ -244,12 +249,44 @@ internal class Composer : Base
         {
             if (settings.Deaths)
             {
-                Dict.Add(Statistic.Death, Helper.TopNResultForCategory(Categories.Death, settings.NumberListings));
+                if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+                {
+                    DiscordConnectorPlugin.StaticLogger.LogInfo("Getting death rankings for all time");
+                }
+                var deathResults = Helper.TopNResultForCategory(Categories.Death, settings.NumberListings);
+                if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+                {
+                    DiscordConnectorPlugin.StaticLogger.LogInfo($"Got {deathResults?.Count ?? 0} death results");
+                    if (deathResults != null && deathResults.Count > 0)
+                    {
+                        foreach (var result in deathResults)
+                        {
+                            DiscordConnectorPlugin.StaticLogger.LogInfo($"  Death result: {result?.Name ?? "null"} - {result?.Count ?? 0}");
+                        }
+                    }
+                }
+                Dict.Add(Statistic.Death, deathResults);
             }
 
             if (settings.Sessions)
             {
-                Dict.Add(Statistic.Session, Helper.TopNResultForCategory(Categories.Join, settings.NumberListings));
+                if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+                {
+                    DiscordConnectorPlugin.StaticLogger.LogInfo("Getting session rankings for all time");
+                }
+                var sessionResults = Helper.TopNResultForCategory(Categories.Join, settings.NumberListings);
+                if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+                {
+                    DiscordConnectorPlugin.StaticLogger.LogInfo($"Got {sessionResults?.Count ?? 0} session results");
+                    if (sessionResults != null && sessionResults.Count > 0)
+                    {
+                        foreach (var result in sessionResults)
+                        {
+                            DiscordConnectorPlugin.StaticLogger.LogInfo($"  Session result: {result?.Name ?? "null"} - {result?.Count ?? 0}");
+                        }
+                    }
+                }
+                Dict.Add(Statistic.Session, sessionResults);
             }
 
             if (settings.Shouts)
@@ -298,6 +335,22 @@ internal class Composer : Base
             }
         }
 
+        if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogInfo("Final AllRankings dictionary contents:");
+            foreach (var key in Dict.Keys)
+            {
+                DiscordConnectorPlugin.StaticLogger.LogInfo($"  - {key}: {Dict[key]?.Count ?? 0} results");
+                if (Dict[key] != null && Dict[key].Count > 0)
+                {
+                    foreach (var result in Dict[key])
+                    {
+                        DiscordConnectorPlugin.StaticLogger.LogInfo($"    * {result?.Name ?? "null"} - {result?.Count ?? 0}");
+                    }
+                }
+            }
+        }
+        
         DiscordConnectorPlugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
         printDict(Dict);
 
@@ -313,14 +366,44 @@ internal class Composer : Base
         {
             if (settings.Deaths)
             {
-                Dict.Add(Statistic.Death,
-                    Helper.TopNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate));
+                if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+                {
+                    DiscordConnectorPlugin.StaticLogger.LogInfo($"Getting death rankings for time range {startDate} to {endDate}");
+                }
+                var deathResults = Helper.TopNResultForCategory(Categories.Death, settings.NumberListings, startDate, endDate);
+                if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+                {
+                    DiscordConnectorPlugin.StaticLogger.LogInfo($"Got {deathResults?.Count ?? 0} death results");
+                    if (deathResults != null && deathResults.Count > 0)
+                    {
+                        foreach (var result in deathResults)
+                        {
+                            DiscordConnectorPlugin.StaticLogger.LogInfo($"  Death result: {result?.Name ?? "null"} - {result?.Count ?? 0}");
+                        }
+                    }
+                }
+                Dict.Add(Statistic.Death, deathResults);
             }
 
             if (settings.Sessions)
             {
-                Dict.Add(Statistic.Session,
-                    Helper.TopNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate));
+                if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+                {
+                    DiscordConnectorPlugin.StaticLogger.LogInfo($"Getting session rankings for time range {startDate} to {endDate}");
+                }
+                var sessionResults = Helper.TopNResultForCategory(Categories.Join, settings.NumberListings, startDate, endDate);
+                if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+                {
+                    DiscordConnectorPlugin.StaticLogger.LogInfo($"Got {sessionResults?.Count ?? 0} session results");
+                    if (sessionResults != null && sessionResults.Count > 0)
+                    {
+                        foreach (var result in sessionResults)
+                        {
+                            DiscordConnectorPlugin.StaticLogger.LogInfo($"  Session result: {result?.Name ?? "null"} - {result?.Count ?? 0}");
+                        }
+                    }
+                }
+                Dict.Add(Statistic.Session, sessionResults);
             }
 
             if (settings.Shouts)
@@ -371,11 +454,26 @@ internal class Composer : Base
             if (settings.TimeOnline)
             {
                 Dict.Add(Statistic.TimeOnline,
-                    Helper.BottomNResultForCategory(Categories.Ping, settings.NumberListings, startDate, endDate));
+                    Helper.BottomNResultForCategory(Categories.TimeOnline, settings.NumberListings, startDate, endDate));
             }
         }
 
         DiscordConnectorPlugin.StaticLogger.LogDebug($"Prepared to send leaderboard for {Dict.Keys.Count} values");
+        if (DiscordConnectorPlugin.StaticConfig.DebugLeaderboardOperations)
+        {
+            DiscordConnectorPlugin.StaticLogger.LogInfo("Final dictionary contents:");
+            foreach (var key in Dict.Keys)
+            {
+                DiscordConnectorPlugin.StaticLogger.LogInfo($"  - {key}: {Dict[key]?.Count ?? 0} results");
+                if (Dict[key] != null && Dict[key].Count > 0)
+                {
+                    foreach (var result in Dict[key])
+                    {
+                        DiscordConnectorPlugin.StaticLogger.LogInfo($"    * {result?.Name ?? "null"} - {result?.Count ?? 0}");
+                    }
+                }
+            }
+        }
         printDict(Dict);
 
         return Dict;
