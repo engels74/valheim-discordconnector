@@ -231,6 +231,21 @@ internal static class EmbedTemplates
             // Use the configured color for server save events
             builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedServerSaveColor);
         }
+        else if (Webhook.Event.EventUpdate == eventType)
+        {
+            builder.SetTitle("🔄 Event Update");
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
+        }
+        else if (Webhook.Event.EventPaused == eventType)
+        {
+            builder.SetTitle("⏸️ Event Paused");
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
+        }
+        else if (Webhook.Event.EventResumed == eventType)
+        {
+            builder.SetTitle("▶️ Event Resumed");
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
+        }
         
         // Add the message as description
         builder.SetDescription(message);
@@ -351,6 +366,21 @@ internal static class EmbedTemplates
         else if (Webhook.Event.EventStart == eventType)
         {
             builder.SetTitle("🌩️ Event Started");
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
+        }
+        else if (Webhook.Event.EventUpdate == eventType)
+        {
+            builder.SetTitle("🔄 Event Update");
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
+        }
+        else if (Webhook.Event.EventPaused == eventType)
+        {
+            builder.SetTitle("⏸️ Event Paused");
+            builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
+        }
+        else if (Webhook.Event.EventResumed == eventType)
+        {
+            builder.SetTitle("▶️ Event Resumed");
             builder.SetColor(DiscordConnectorPlugin.StaticConfig.EmbedWorldEventColor);
         }
         else
