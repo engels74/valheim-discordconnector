@@ -15,7 +15,6 @@ public class Webhook
         EventStart,
         EventPaused,
         EventResumed,
-        EventUpdate,
         EventStop,
         PlayerJoin,
         PlayerLeave,
