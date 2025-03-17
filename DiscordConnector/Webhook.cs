@@ -81,7 +81,7 @@ public class Webhook
     public static readonly HashSet<Event> WorldEvents = new HashSet<Event>
     {
         Event.EventStart, Event.EventPaused, Event.EventResumed, Event.EventStop,
-        Event.EventLifecycle, Event.NewDayNumber, Event.EventUpdate
+        Event.EventLifecycle, Event.NewDayNumber
     };
     
     // Player event collections
@@ -198,9 +198,6 @@ public class Webhook
 
             case "newDayNumber":
                 return Event.NewDayNumber;
-
-            case "eventUpdate":
-                return Event.EventUpdate;
 
             default:
                 DiscordConnectorPlugin.StaticLogger.LogDebug($"Unmatched event token '{eventToken}'");
